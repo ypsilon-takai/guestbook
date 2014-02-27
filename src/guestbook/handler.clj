@@ -3,6 +3,7 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.file-info :refer [wrap-file-info]]
             [noir.session :as session]
+            [noir.validation :refer [wrap-noir-validation]]
             [ring.middleware.session.memory :refer [memory-store]]
             [hiccup.middleware :refer [wrap-base-url]]
             [compojure.handler :as handler]
@@ -26,9 +27,12 @@
 
 (def app
   (-> (handler/site
-       (routes auth-routes home-routes app-routes))
-      (session/wrap-noir-session {:store (memory-store)})))
-
-
+       (routes auth-routes
+               home-routes
+               app-routes))
+      (wrap-base-url)
+      (session/wrap-noir-session
+       {:store (memory-store)})
+      (wrap-noir-validation)))
 
 
